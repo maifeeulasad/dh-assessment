@@ -14,7 +14,7 @@ public class Product {
     private Long productId;
     private String name;
     private Double sellingPrice;
-    private Boolean available;
+    private Long countAvailability;
     @JsonIgnore
     private Double sourcingPrice;
     @Column(length = 4096)
