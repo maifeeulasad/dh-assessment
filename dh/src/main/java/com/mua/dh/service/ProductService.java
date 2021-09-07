@@ -29,7 +29,13 @@ public class ProductService {
     }
 
     public List<Product>searchProducts(String name,String description){
-
+        if(name==null){
+            name ="";
+        }
+        if(description==null){
+            description="";
+        }
+        return productRepo.findAllByNameAndDescription(name,description);
     }
 
     private List<Product> getAll(){

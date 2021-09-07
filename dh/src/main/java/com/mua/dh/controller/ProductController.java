@@ -22,4 +22,9 @@ public class ProductController {
         return service.getProducts(warehouseId, areaId);
     }
 
+    @GetMapping("/search")
+    private List<Product> search(@RequestParam(required = false) String name,@RequestParam(required = false) String description){
+        return service.searchProducts(name, description);
+    }
+
 }
