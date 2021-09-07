@@ -1,5 +1,7 @@
 package com.mua.dh.config;
 
+import com.mua.dh.model.UserType;
+import com.mua.dh.repo.UserRepo;
 import com.mua.dh.security.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -45,8 +47,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .cors()
                 .and()
                 .authorizeRequests()
-                .antMatchers("/auth/**","/h2/**").permitAll()
-                .antMatchers("/**").hasRole("USER")
+                .antMatchers("/**").permitAll()
+                .antMatchers("/inventory").hasRole(UserType.USER.toString())
+                .antMatchers("/inventory").hasRole(UserType.ADMIN.toString())
                 .anyRequest().authenticated()
                 .and()
                 .addFilter(jwtAuthorizationFilter());
