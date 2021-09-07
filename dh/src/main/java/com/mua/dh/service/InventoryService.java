@@ -27,7 +27,10 @@ public class InventoryService {
 
     public Product add(NewProductInventory newProductInventory){
         Product product = new Product(newProductInventory);
-        return productRepo.save(product);
+        if(isAdmin()){
+            return productRepo.save(product);
+        }
+        return new Product();
     }
 
     public List<ProductInventoryDto> checkout(@RequestBody List<ProductInventoryDto> productList) {
@@ -65,27 +68,41 @@ public class InventoryService {
     }
 
     public Product restock(ProductInventoryDto productInventoryDto) {
-        Optional<Product> productOptional = productRepo.findById(productInventoryDto.getProductId());
-        if(productOptional.isPresent()){
-            Product product = productOptional.get();
-            if(productInventoryDto.getNewSellingPrice()!=null && productInventoryDto.getNewSellingPrice()>0){
-                product.setSellingPrice(productInventoryDto.getNewSellingPrice());
+        if(isAdmin()){
+            Optional<Product> productOptional = productRepo.findById(productInventoryDto.getProductId());
+            if(productOptional.isPresent()){
+                Product product = productOptional.get();
+                if(productInventoryDto.getNewSellingPrice()!=null && productInventoryDto.getNewSellingPrice()>0){
+                    product.setSellingPrice(productInventoryDto.getNewSellingPrice());
+                }
+                if(productInventoryDto.getQuantity()>0){
+                    product.setCountAvailability(productInventoryDto.getQuantity());
+                }
+                return productRepo.save(product);
             }
-            if(productInventoryDto.getQuantity()>0){
-                product.setCountAvailability(productInventoryDto.getQuantity());
-            }
-            return productRepo.save(product);
         }
         return new Product();
     }
     public Product soldOut(ProductInventoryDto productInventoryDto) {
-        Optional<Product> productOptional = productRepo.findById(productInventoryDto.getProductId());
-        if(productOptional.isPresent()) {
-            Product product = productOptional.get();
-            product.setCountAvailability(0L);
-            return productRepo.save(product);
+        if(isAdmin()){
+            Optional<Product> productOptional = productRepo.findById(productInventoryDto.getProductId());
+            if(productOptional.isPresent()) {
+                Product product = productOptional.get();
+                product.setCountAvailability(0L);
+                return productRepo.save(product);
+            }
         }
         return new Product();
+    }
+
+    private Boolean isAdmin(){
+        final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if(authentication.isAuthenticated()) {
+            UserPrincipal principal = (UserPrincipal) authentication.getPrincipal();
+            User user = userRepo.findByUsername(principal.getUsername());
+            return user.getLoginCredential().getRole().equals("ROLE_ADMIN");
+        }
+        return false;
     }
 
 }
