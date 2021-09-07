@@ -1,5 +1,6 @@
 package com.mua.dh.controller;
 
+import com.mua.dh.dto.NewProductInventory;
 import com.mua.dh.dto.ProductInventoryDto;
 import com.mua.dh.model.Product;
 import com.mua.dh.service.InventoryService;
@@ -19,8 +20,8 @@ public class InventoryController {
     private InventoryService service;
 
     @PostMapping("/add")
-    private Product add(@RequestBody Product product){
-        return service.add(product);
+    private Product add(@RequestBody NewProductInventory newProductInventory){
+        return service.add(newProductInventory);
     }
 
     @PostMapping("/checkout")

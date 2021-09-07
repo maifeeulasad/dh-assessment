@@ -1,5 +1,6 @@
 package com.mua.dh.service;
 
+import com.mua.dh.dto.NewProductInventory;
 import com.mua.dh.dto.ProductInventoryDto;
 import com.mua.dh.model.Product;
 import com.mua.dh.repo.ProductRepo;
@@ -17,8 +18,8 @@ public class InventoryService {
     @Autowired
     private ProductRepo productRepo;
 
-    public Product add(Product product){
-        product.setProductId(null);
+    public Product add(NewProductInventory newProductInventory){
+        Product product = new Product(newProductInventory);
         return productRepo.save(product);
     }
 
@@ -51,7 +52,7 @@ public class InventoryService {
             if(productInventoryDto.getQuantity()>0){
                 product.setCountAvailability(productInventoryDto.getQuantity());
             }
-            productRepo.save(product);
+            return productRepo.save(product);
         }
         return new Product();
     }
