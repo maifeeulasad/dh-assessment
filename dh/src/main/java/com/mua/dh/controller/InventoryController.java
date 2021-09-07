@@ -18,6 +18,11 @@ public class InventoryController {
     @Autowired
     private InventoryService service;
 
+    @PostMapping("/add")
+    private Product add(@RequestBody Product product){
+        return service.add(product);
+    }
+
     @PostMapping("/checkout")
     private List<ProductInventoryDto> checkout(@RequestBody List<ProductInventoryDto> productList){
         return service.checkout(productList);

@@ -17,6 +17,11 @@ public class InventoryService {
     @Autowired
     private ProductRepo productRepo;
 
+    public Product add(Product product){
+        product.setProductId(null);
+        return productRepo.save(product);
+    }
+
     public List<ProductInventoryDto> checkout(@RequestBody List<ProductInventoryDto> productList) {
         List<ProductInventoryDto> result = new ArrayList<>();
         for (ProductInventoryDto productInventoryDto :
