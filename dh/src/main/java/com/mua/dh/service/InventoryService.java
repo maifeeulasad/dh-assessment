@@ -17,16 +17,16 @@ public class InventoryService {
     @Autowired
     private ProductRepo productRepo;
 
-    public List<ProductInventoryDto> checkout(@RequestBody List<ProductInventoryDto> productList){
-        List<ProductInventoryDto> result= new ArrayList<>();
-        for (ProductInventoryDto productInventoryDto:
-             productList) {
-            if(productInventoryDto.getQuantity()>=0){
+    public List<ProductInventoryDto> checkout(@RequestBody List<ProductInventoryDto> productList) {
+        List<ProductInventoryDto> result = new ArrayList<>();
+        for (ProductInventoryDto productInventoryDto :
+                productList) {
+            if (productInventoryDto.getQuantity() >= 0) {
                 Optional<Product> productOptional = productRepo.findById(productInventoryDto.getProductId());
-                if(productOptional.isPresent()){
+                if (productOptional.isPresent()) {
                     Product product = productOptional.get();
-                    if(product.getCountAvailability()>=productInventoryDto.getQuantity()){
-                        product.setCountAvailability(product.getCountAvailability()-productInventoryDto.getQuantity());
+                    if (product.getCountAvailability() >= productInventoryDto.getQuantity()) {
+                        product.setCountAvailability(product.getCountAvailability() - productInventoryDto.getQuantity());
                         productRepo.save(product);
                         result.add(productInventoryDto);
                     }
@@ -34,6 +34,30 @@ public class InventoryService {
             }
         }
         return result;
+    }
+
+    public Product restock(ProductInventoryDto productInventoryDto) {
+        Optional<Product> productOptional = productRepo.findById(productInventoryDto.getProductId());
+        if(productOptional.isPresent()){
+            Product product = productOptional.get();
+            if(productInventoryDto.getNewSellingPrice()!=null && productInventoryDto.getNewSellingPrice()>0){
+                product.setSellingPrice(productInventoryDto.getNewSellingPrice());
+            }
+            if(productInventoryDto.getQuantity()>0){
+                product.setCountAvailability(productInventoryDto.getQuantity());
+            }
+            productRepo.save(product);
+        }
+        return new Product();
+    }
+    public Product soldOut(ProductInventoryDto productInventoryDto) {
+        Optional<Product> productOptional = productRepo.findById(productInventoryDto.getProductId());
+        if(productOptional.isPresent()) {
+            Product product = productOptional.get();
+            product.setCountAvailability(0L);
+            return productRepo.save(product);
+        }
+        return new Product();
     }
 
 }

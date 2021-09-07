@@ -1,6 +1,7 @@
 package com.mua.dh.controller;
 
 import com.mua.dh.dto.ProductInventoryDto;
+import com.mua.dh.model.Product;
 import com.mua.dh.service.InventoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,4 +23,13 @@ public class InventoryController {
         return service.checkout(productList);
     }
 
+    @PostMapping("/restock")
+    private Product restock(@RequestBody ProductInventoryDto productInventoryDto){
+        return service.restock(productInventoryDto);
+    }
+
+    @PostMapping("/sold")
+    private Product soldOut(@RequestBody ProductInventoryDto productInventoryDto){
+        return service.soldOut(productInventoryDto);
+    }
 }

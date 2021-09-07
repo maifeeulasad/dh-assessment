@@ -11,4 +11,5 @@ import lombok.NoArgsConstructor;
 public class ProductInventoryDto {
     private Long productId;
     private Long quantity;
+    private Double newSellingPrice;
 }
