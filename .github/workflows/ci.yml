@@ -14,4 +14,4 @@ jobs:
           java-version: '8'
           distribution: 'adopt'
       - name: Build
-        run: mvn spring-boot:run
+        run: mvn -Dtest=DhApplication test
