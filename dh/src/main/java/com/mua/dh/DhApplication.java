@@ -2,6 +2,7 @@ package com.mua.dh;
 
 import com.mua.dh.model.LoginCredential;
 import com.mua.dh.model.User;
+import com.mua.dh.model.UserType;
 import com.mua.dh.repo.LoginCredentialRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -36,7 +37,7 @@ public class DhApplication implements CommandLineRunner {
 		loginCredential.setUsername(username);
 		loginCredential.setPassword(password);
 		user.setUsername(username);
-		loginCredential.setRole("ROLE_ADMIN");
+		loginCredential.setRole(UserType.ADMIN);
 
 		loginCredentialRepo.save(loginCredential);
 	}

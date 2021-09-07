@@ -19,8 +19,7 @@ public class LoginCredential {
     @Column(nullable = false)
     private String password;
 
-    //todo: use enum
-    public String role="ROLE_USER";
+    public UserType role=UserType.USER;
 
     @OneToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     private User user;

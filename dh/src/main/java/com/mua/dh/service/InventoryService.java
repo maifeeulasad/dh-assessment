@@ -5,6 +5,7 @@ import com.mua.dh.dto.ProductInventoryDto;
 import com.mua.dh.model.Product;
 import com.mua.dh.model.User;
 import com.mua.dh.model.UserPrincipal;
+import com.mua.dh.model.UserType;
 import com.mua.dh.repo.ProductRepo;
 import com.mua.dh.repo.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -100,7 +101,7 @@ public class InventoryService {
         if(authentication.isAuthenticated()) {
             UserPrincipal principal = (UserPrincipal) authentication.getPrincipal();
             User user = userRepo.findByUsername(principal.getUsername());
-            return user.getLoginCredential().getRole().equals("ROLE_ADMIN");
+            return user.getLoginCredential().getRole()== UserType.ADMIN;
         }
         return false;
     }
