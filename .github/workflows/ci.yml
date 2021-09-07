@@ -13,5 +13,5 @@ jobs:
         with:
           java-version: '8'
           distribution: 'adopt'
-      - name: Build
-        run: mvn -Dtest=DhApplication test
+      - name: Test
+        run: mvn -Dtest=DhApplication -DfailIfNoTests=false test
