@@ -5,7 +5,9 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @Entity
@@ -24,4 +26,7 @@ public class User {
 
     @OneToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     private LoginCredential loginCredential;
+
+    @ManyToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    private List<Product> productsBought = new ArrayList<>();
 }

@@ -3,8 +3,13 @@ package com.mua.dh.service;
 import com.mua.dh.dto.NewProductInventory;
 import com.mua.dh.dto.ProductInventoryDto;
 import com.mua.dh.model.Product;
+import com.mua.dh.model.User;
+import com.mua.dh.model.UserPrincipal;
 import com.mua.dh.repo.ProductRepo;
+import com.mua.dh.repo.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -17,6 +22,8 @@ public class InventoryService {
 
     @Autowired
     private ProductRepo productRepo;
+    @Autowired
+    private UserRepo userRepo;
 
     public Product add(NewProductInventory newProductInventory){
         Product product = new Product(newProductInventory);
@@ -24,19 +31,34 @@ public class InventoryService {
     }
 
     public List<ProductInventoryDto> checkout(@RequestBody List<ProductInventoryDto> productList) {
-        List<ProductInventoryDto> result = new ArrayList<>();
-        for (ProductInventoryDto productInventoryDto :
-                productList) {
-            if (productInventoryDto.getQuantity() >= 0) {
-                Optional<Product> productOptional = productRepo.findById(productInventoryDto.getProductId());
-                if (productOptional.isPresent()) {
-                    Product product = productOptional.get();
-                    if (product.getCountAvailability() >= productInventoryDto.getQuantity()) {
-                        product.setCountAvailability(product.getCountAvailability() - productInventoryDto.getQuantity());
-                        productRepo.save(product);
-                        result.add(productInventoryDto);
+        final List<ProductInventoryDto> result = new ArrayList<>();
+
+        final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if(authentication.isAuthenticated()) {
+            UserPrincipal principal = (UserPrincipal) authentication.getPrincipal();
+            User user = userRepo.findByUsername(principal.getUsername());
+            List<Product> productsAdded = new ArrayList<>();
+            if (user!=null) {
+                for (ProductInventoryDto productInventoryDto :
+                        productList) {
+                    if (productInventoryDto.getQuantity() >= 0) {
+                        Optional<Product> productOptional = productRepo.findById(productInventoryDto.getProductId());
+                        if (productOptional.isPresent()) {
+                            Product product = productOptional.get();
+                            if (product.getCountAvailability() >= productInventoryDto.getQuantity()) {
+                                product.setCountAvailability(product.getCountAvailability() - productInventoryDto.getQuantity());
+                                productRepo.save(product);
+                                result.add(productInventoryDto);
+                                productsAdded.add(product);
+                            }
+                        }
                     }
                 }
+                // todo: this will throw error when same product is added on multiple checkout,
+                // need to handle with a Checkout/Purchase entity
+                List<Product> products = user.getProductsBought();
+                products.addAll(productsAdded);
+                user.setProductsBought(products);
             }
         }
         return result;

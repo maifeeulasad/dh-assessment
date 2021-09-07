@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -29,6 +30,10 @@ public class Product {
 
     @ManyToMany(cascade = CascadeType.ALL)
     private List<Warehouse> warehouses;
+
+    @JsonIgnore
+    @ManyToMany(cascade = CascadeType.ALL)
+    private List<User> usersBought = new ArrayList<>();
 
     public Product(NewProductInventory newProductInventory){
         setName(newProductInventory.getName());
