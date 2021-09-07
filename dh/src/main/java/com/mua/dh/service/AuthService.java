@@ -19,15 +19,18 @@ public class AuthService {
 
     public Boolean join(LoginCredential loginCredential){
         List<LoginCredential> loginCredentials = loginCredentialRepo.findByUsername(loginCredential.getUsername());
-        if(loginCredentials!=null && loginCredentials.size()!=0){
+        if(loginCredentials.size()!=0){
             return false;
         }
         loginCredential.setLoginCredentialId(null);
-        loginCredential.setUser(new User());
+        User user=new User();
+        user.setUsername(loginCredential.getUsername());
+        user.setLoginCredential(loginCredential);
+        loginCredential.setUser(user);
         try{
             loginCredentialRepo.save(loginCredential);
             return true;
-        }catch (Exception ignored){
+        }catch (Exception e){
             return false;
         }
     }
